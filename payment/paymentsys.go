@@ -4,6 +4,7 @@ package payment
 import (
 	"fmt"
 	"money-transfer/user"
+	"sync"
 )
 
 type PaymentSystem struct {
@@ -26,29 +27,40 @@ func (ps *PaymentSystem) AddTransaction(t Transaction) {
 	ps.TransactionQueue = append(ps.TransactionQueue, t)
 }
 
-func (ps *PaymentSystem) ProcessingTransactions() error {
-	for _, t := range ps.TransactionQueue {
-
-		// Ищем пользователя, который отправляет деньги
-		fromUser, ok := ps.users[t.FromUserID]
-		if !ok {
-			return fmt.Errorf("пользователь %s не найден", t.FromUserID)
-		}
-
-		// Ищем пользователя, который получает деньги
-		toUser, ok := ps.users[t.ToUserID]
-		if !ok {
-			return fmt.Errorf("пользователь %s не найден", t.ToUserID)
-		}
-
-		// Снимаем деньги
-		if !fromUser.Withdraw(t.Amount) {
-			return fmt.Errorf("недостаточно средств у пользователя %s", t.FromUserID)
-		}
-
-		// Начисляем деньги
-		toUser.Deposit(t.Amount)
+func (ps *PaymentSystem) ProcessTransaction(t Transaction) error {
+	fromUser, ok := ps.users[t.FromUserID]
+	if !ok {
+		return fmt.Errorf(
+			"пользователь %s не найден",
+			t.FromUserID,
+		)
 	}
 
+	toUser, ok := ps.users[t.ToUserID]
+	if !ok {
+		return fmt.Errorf("Пользователь %s не найден", t.ToUserID,)
+	}
+
+	if !fromUser.Withdraw(t.Amount) {
+		return fmt.Errorf("Недостаточно средств у пользователя %s",	t.FromUserID,)
+	}
+
+	toUser.Deposit(t.Amount)
+
 	return nil
+}
+
+
+func (ps *PaymentSystem) Worker(ch <-chan Transaction, wg *sync.WaitGroup) {
+	defer wg.Done()
+	
+	for t := range ch {
+		err := ps.ProcessTransaction(t)
+		if err != nil {
+			fmt.Println("Ошибка при обработке транзакции:", err)
+			continue
+		}
+
+		fmt.Printf("Транзакция успешно обработана: %s -> %s, сумма: %.2f\n", t.FromUserID, t.ToUserID, t.Amount)
+	}
 }
