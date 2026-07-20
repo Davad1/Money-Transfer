@@ -51,6 +51,6 @@ func main() {
 
     // Подсказка
 	fmt.Println("Итого")
-	fmt.Printf("User 1 ,баланс %v", user1.Balance)
-	fmt.Printf("User 2 ,баланс %v", user2.Balance)
+	fmt.Printf("User 1 Баланс: %v", user1.Balance)
+	fmt.Printf("User 2 Баланс: %v", user2.Balance)
 }

@@ -29,24 +29,23 @@ func (ps *PaymentSystem) AddTransaction(t Transaction) {
 func (ps *PaymentSystem) ProcessingTransactions() error {
 	for _, t := range ps.TransactionQueue {
 
-		// Ищем пользователя, который отправляет деньги
+	
 		fromUser, ok := ps.users[t.FromUserID]
 		if !ok {
 			return fmt.Errorf("пользователь %s не найден", t.FromUserID)
 		}
 
-		// Ищем пользователя, который получает деньги
+	
 		toUser, ok := ps.users[t.ToUserID]
 		if !ok {
 			return fmt.Errorf("пользователь %s не найден", t.ToUserID)
 		}
 
-		// Снимаем деньги
 		if err := fromUser.Withdraw(t.Amount); err != nil {
 			return fmt.Errorf("ошибка снятия у пользователя %v: %v", t.FromUserID, err)
 		}
 
-		// Начисляем деньги
+	
 		toUser.Deposit(t.Amount)
 	}
 
