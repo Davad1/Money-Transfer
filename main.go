@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	// Создаём платёжную систему.
+
 	ps := &payment.PaymentSystem{}
 
-	// Создаём пользователей.
+
 	fmt.Println("Создаю UserID: 1 с балансом 1000")
 	fmt.Println("Создаю UserID: 2 с балансом 500")
 
@@ -27,11 +27,12 @@ func main() {
 		Balance: 500,
 	}
 
-	// Добавляем пользователей в систему.
+	
 	ps.AddUser(user1)
 	ps.AddUser(user2)
 
-	// Создаём транзакции.
+
+	// Подсказка
 	fmt.Println("Перевожу с UserID: 1 на UserID: 2 сумму 200")
 	fmt.Println("Перевожу с UserID: 2 на UserID: 1 сумму 50")
 
@@ -47,20 +48,19 @@ func main() {
 		Amount:     50,
 	}
 
-	// Добавляем транзакции в очередь.
 	ps.AddTransaction(t1)
 	ps.AddTransaction(t2)
 
-	// Создаём буферизированный канал.
+	
 	ch := make(
 		chan payment.Transaction,
 		len(ps.TransactionQueue),
 	)
 
-	// Создаём WaitGroup.
+
 	var wg sync.WaitGroup
 
-	// Запускаем три воркера.
+
 	workersCount := 3
 
 	for i := 0; i < workersCount; i++ {
@@ -68,18 +68,17 @@ func main() {
 		go ps.Worker(ch, &wg)
 	}
 
-	// Отправляем все транзакции в канал.
+	
 	for _, transaction := range ps.TransactionQueue {
 		ch <- transaction
 	}
 
-	// Сообщаем воркерам, что новых транзакций не будет.
 	close(ch)
 
-	// Ждём завершения всех воркеров.
+
 	wg.Wait()
 
-	// Выводим итоговые балансы.
+	// Подсказка
 	fmt.Println("Итого")
 	fmt.Printf("User 1 Баланс: %v", user1.Balance)
 	fmt.Printf("User 2 Баланс: %v", user2.Balance)
