@@ -17,19 +17,27 @@ type User struct {
 func (u *User) Deposit(amount float64) {
 	u.mu.Lock()
 	defer u.mu.Unlock()
+
+	if amount <= 0 {
+    	fmt.Println("Сумма не может быть меньше или равна нулю")
+	}
+
 	u.Balance += amount
 	fmt.Println("Депозит выполнен.")
 }
 
-func (u *User) Withdraw(amount float64) bool {
+func (u *User) Withdraw(amount float64) error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	
-	if u.Balance >= amount {
-		u.Balance -= amount
-		fmt.Println("Снятие успешно выполнено.")
-		return true
+
+	if amount <= 0 {
+    	return fmt.Errorf("Сумма не может быть меньше или равна нулю")
 	}
-	fmt.Println("Недостаточно средств для снятия.")
-	return false
+	
+	if u.Balance < amount {
+    	return fmt.Errorf("недостаточно средств")
+	}
+
+	u.Balance -= amount
+	return nil
 }

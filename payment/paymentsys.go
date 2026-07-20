@@ -41,8 +41,9 @@ func (ps *PaymentSystem) ProcessTransaction(t Transaction) error {
 		return fmt.Errorf("Пользователь %s не найден", t.ToUserID,)
 	}
 
-	if !fromUser.Withdraw(t.Amount) {
-		return fmt.Errorf("Недостаточно средств у пользователя %s",	t.FromUserID,)
+	err := fromUser.Withdraw(t.Amount)
+	if err != nil {
+		return fmt.Errorf("ошибка снятия у пользователя %v: %v", t.FromUserID, err)
 	}
 
 	toUser.Deposit(t.Amount)
