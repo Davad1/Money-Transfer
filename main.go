@@ -49,7 +49,7 @@ func main() {
 		fmt.Println("Ошибка при обработке транзакций:", err)
 	}
 
-	// Подсказка
+    // Подсказка
 	fmt.Println("Итого")
 	fmt.Printf("User 1 ,баланс %v", user1.Balance)
 	fmt.Printf("User 2 ,баланс %v", user2.Balance)
