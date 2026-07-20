@@ -30,15 +30,12 @@ func (ps *PaymentSystem) AddTransaction(t Transaction) {
 func (ps *PaymentSystem) ProcessTransaction(t Transaction) error {
 	fromUser, ok := ps.users[t.FromUserID]
 	if !ok {
-		return fmt.Errorf(
-			"пользователь %s не найден",
-			t.FromUserID,
-		)
+		return fmt.Errorf("пользователь %s не найден", t.FromUserID)
 	}
 
 	toUser, ok := ps.users[t.ToUserID]
 	if !ok {
-		return fmt.Errorf("Пользователь %s не найден", t.ToUserID,)
+		return fmt.Errorf("Пользователь %s не найден", t.ToUserID)
 	}
 
 	err := fromUser.Withdraw(t.Amount)
