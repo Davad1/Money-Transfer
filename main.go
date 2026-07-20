@@ -21,6 +21,6 @@ func main() {
 	user1.Deposit(200)
 	user2.Withdraw(50)
 
-	fmt.Printf("User 1: %.2f\n", user1.Balance)
-	fmt.Printf("User 2: %.2f\n", user2.Balance)
+	fmt.Printf("User 1 Баланс: %v", user1.Balance)
+	fmt.Printf("User 2 Баланс: %v", user2.Balance)
 }
