@@ -42,8 +42,8 @@ func (ps *PaymentSystem) ProcessingTransactions() error {
 		}
 
 		// Снимаем деньги
-		if !fromUser.Withdraw(t.Amount) {
-			return fmt.Errorf("недостаточно средств у пользователя %s", t.FromUserID)
+		if err := fromUser.Withdraw(t.Amount); err != nil {
+			return fmt.Errorf("ошибка снятия у пользователя %s: %w", t.FromUserID, err)
 		}
 
 		// Начисляем деньги
@@ -51,4 +51,5 @@ func (ps *PaymentSystem) ProcessingTransactions() error {
 	}
 
 	return nil
+
 }
