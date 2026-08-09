@@ -20,6 +20,7 @@ func (u *User) Deposit(amount float64) {
 
 	if amount <= 0 {
     	fmt.Println("Сумма не может быть меньше или равна нулю")
+		return
 	}
 
 	u.Balance += amount
